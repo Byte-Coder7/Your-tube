@@ -16,6 +16,16 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Watch parties
+
+Sign in, open a video, and select **Watch together** to create a party. Share the
+invite link so other signed-in users can join. Playback and chat are synchronized
+through the backend Socket.IO server. Camera, microphone, and screen sharing are
+optional and require browser permission; they work on HTTPS pages and localhost.
+WebRTC connections use a public STUN server, so some networks may also require a
+TURN service for calls or screen sharing to connect reliably. Session recording
+is not available; party audio and video are not recorded.
+
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
 [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.

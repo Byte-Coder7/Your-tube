@@ -4,18 +4,23 @@ import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { UserProvider } from "../lib/AuthContext";
-export default function App({ Component, pageProps }: AppProps) {
+import { useUser } from "../lib/AuthContext";
+
+function AppLayout({ Component, pageProps }: AppProps) {
+  const { resolvedTheme } = useUser();
   return (
-    <UserProvider>
-      <div className="min-h-screen bg-white text-black">
-        <title>Your-Tube Clone</title>
-        <Header />
-        <Toaster />
-        <div className="flex">
-          <Sidebar />
-          <Component {...pageProps} />
-        </div>
+    <div className={`${resolvedTheme === "dark" ? "dark" : ""} min-h-screen bg-background text-foreground`}>
+      <title>Your-Tube Clone</title>
+      <Header />
+      <Toaster />
+      <div className="flex">
+        <Sidebar />
+        <Component {...pageProps} />
       </div>
-    </UserProvider>
+    </div>
   );
+}
+
+export default function App(props: AppProps) {
+  return <UserProvider><AppLayout {...props} /></UserProvider>;
 }

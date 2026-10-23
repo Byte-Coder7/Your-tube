@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import VideoMedia from "./VideoMedia";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { MoreVertical, X, Clock } from "lucide-react";
@@ -89,10 +90,7 @@ export default function HistoryContent() {
           <div key={item._id} className="flex gap-4 group">
             <Link href={`/watch/${item.videoid._id}`} className="flex-shrink-0">
               <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden">
-                <video
-                  src={`${process.env.BACKEND_URL}/${item.videoid?.filepath}`}
-                  className="object-cover group-hover:scale-105 transition-transform duration-200"
-                />
+                <VideoMedia videoId={item.videoid?._id} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-200" />
               </div>
             </Link>
 

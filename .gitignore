@@ -1,0 +1,6 @@
+# env files (can opt-in for committing if needed)
+/server/.env
+/server/.env.*
+!/server/.env.example
+
+/server/node_modules/

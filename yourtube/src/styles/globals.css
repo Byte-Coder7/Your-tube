@@ -78,13 +78,6 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -123,6 +116,28 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+.dark .bg-white,
+.dark .bg-slate-50 {
+  background-color: var(--background);
+}
+
+.dark .text-black,
+.dark .text-slate-950 {
+  color: var(--foreground);
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-slate-200 {
+  border-color: var(--border);
+}
+
+.dark .text-gray-500,
+.dark .text-gray-600,
+.dark .text-slate-600 {
+  color: var(--muted-foreground);
 }
 
 @layer base {

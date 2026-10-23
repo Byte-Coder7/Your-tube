@@ -1,5 +1,5 @@
-import { Bell, Menu, Mic, Search, User, VideoIcon } from "lucide-react";
-import React, { useState } from "react";
+import { Bell, Menu, Mic, Moon, Search, Sun, User, VideoIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Input } from "./ui/input";
@@ -14,9 +14,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Channeldialogue from "./channeldialogue";
 import { useRouter } from "next/router";
 import { useUser } from "@/lib/AuthContext";
+import { DropdownMenuLabel } from "./ui/dropdown-menu";
+import OtpVerificationDialog from "./OtpVerificationDialog";
+import { toast } from "sonner";
 
 const Header = () => {
-  const { user, logout, handlegooglesignin } = useUser();
+  const {
+    user,
+    logout,
+    handlegooglesignin,
+    themeMode,
+    resolvedTheme,
+    setThemeMode,
+    authError,
+    clearAuthError,
+  } = useUser();
   // const user: any = {
   //   id: "1",
   //   name: "John Doe",
@@ -26,6 +38,12 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isdialogeopen, setisdialogeopen] = useState(false);
   const router = useRouter();
+  useEffect(() => {
+    if (authError) {
+      toast.error(authError);
+      clearAuthError();
+    }
+  }, [authError, clearAuthError]);
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -78,6 +96,19 @@ const Header = () => {
         </Button>
       </form>
       <div className="flex items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Theme preference" title={`Theme: ${themeMode}`}>
+              {resolvedTheme === "dark" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Theme</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => setThemeMode("auto")}>Follow IST schedule</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setThemeMode("light")}>Light</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setThemeMode("dark")}>Dark</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         {user ? (
           <>
             <Button variant="ghost" size="icon">
@@ -146,6 +177,7 @@ const Header = () => {
         onclose={() => setisdialogeopen(false)}
         mode="create"
       />
+      <OtpVerificationDialog />
     </header>
   );
 };

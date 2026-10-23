@@ -14,6 +14,15 @@ const commentschema = mongoose.Schema(
     commentbody: { type: String },
     usercommented: { type: String },
     commentedon: { type: Date, default: Date.now },
+    likes: { type: Number, default: 0 },
+    dislikes: { type: Number, default: 0 },
+    reports: { type: Number, default: 0 },
+    flagged: { type: Boolean, default: false },
+    originalLang: { type: String },
+    userlocation: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

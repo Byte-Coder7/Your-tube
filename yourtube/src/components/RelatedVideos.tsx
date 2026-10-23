@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
+import { Play } from "lucide-react";
 
 interface RelatedVideosProps {
   videos: Array<{
@@ -11,7 +11,6 @@ interface RelatedVideosProps {
     createdAt: string;
   }>;
 }
-const vid = "/video/vdo.mp4";
 export default function RelatedVideos({ videos }: RelatedVideosProps) {
   return (
     <div className="space-y-2">
@@ -21,11 +20,8 @@ export default function RelatedVideos({ videos }: RelatedVideosProps) {
           href={`/watch/${video._id}`}
           className="flex gap-2 group"
         >
-          <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden flex-shrink-0">
-            <video
-              src={vid}
-              className="object-cover group-hover:scale-105 transition-transform duration-200"
-            />
+          <div className="relative flex w-40 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-neutral-200 text-neutral-500 aspect-video">
+            <Play className="size-6" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600">

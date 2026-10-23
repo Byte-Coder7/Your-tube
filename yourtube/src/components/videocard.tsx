@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import VideoMedia from "./VideoMedia";
 
 const videos = "/video/vdo.mp4";
 export default function VideoCard({ video }: any) {
@@ -9,10 +10,7 @@ export default function VideoCard({ video }: any) {
     <Link href={`/watch/${video?._id}`} className="group">
       <div className="space-y-3">
         <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-          <video
-            src={`${process.env.BACKEND_URL}/${video?.filepath}`}
-            className="object-cover group-hover:scale-105 transition-transform duration-200"
-          />
+          <VideoMedia videoId={video?._id} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-200" />
           <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1 rounded">
             10:24
           </div>
@@ -25,6 +23,7 @@ export default function VideoCard({ video }: any) {
             <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600">
               {video?.videotitle}
             </h3>
+            {video?.isPremium && <span className="text-xs font-semibold text-amber-700">Premium</span>}
             <p className="text-sm text-gray-600 mt-1">{video?.videochanel}</p>
             <p className="text-sm text-gray-600">
               {video?.views.toLocaleString()} views •{" "}

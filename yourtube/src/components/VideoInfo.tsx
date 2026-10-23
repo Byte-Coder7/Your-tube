@@ -21,6 +21,9 @@ const VideoInfo = ({ video }: any) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const { user } = useUser();
   const [isWatchLater, setIsWatchLater] = useState(false);
+  const [downloadUsage, setDownloadUsage] = useState<any>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadMessage, setDownloadMessage] = useState("");
 
   // const user: any = {
   //   id: "1",
@@ -51,6 +54,69 @@ const VideoInfo = ({ video }: any) => {
     };
     handleviews();
   }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      setDownloadUsage(null);
+      return;
+    }
+
+    axiosInstance
+      .get("/downloads")
+      .then((response) => setDownloadUsage(response.data.usage))
+      .catch((error) => console.error("Error loading download limit:", error));
+  }, [user]);
+
+  const handleDownload = async () => {
+    if (!user) {
+      setDownloadMessage("Sign in to download videos.");
+      return;
+    }
+
+    setIsDownloading(true);
+    setDownloadMessage("");
+    try {
+      const response = await axiosInstance.post(
+        `/downloads/${video._id}`,
+        {},
+        { responseType: "blob" }
+      );
+      const objectUrl = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = `${video.videotitle || "video"}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      setDownloadMessage("Download started.");
+      const usageResponse = await axiosInstance.get("/downloads");
+      setDownloadUsage(usageResponse.data.usage);
+    } catch (error: any) {
+      let message = error.response?.data?.message;
+      if (error.response?.data instanceof Blob) {
+        try {
+          message = JSON.parse(await error.response.data.text()).message;
+        } catch {
+          message = "Unable to download this video.";
+        }
+      }
+      setDownloadMessage(
+        error.response?.status === 429
+          ? ""
+          : message || "Unable to download this video."
+      );
+      if (error.response?.status === 429) {
+        setDownloadUsage((current: any) =>
+          current
+            ? { ...current, used: current.limit }
+            : { used: 1, limit: 1, plan: "free" }
+        );
+      }
+    } finally {
+      setIsDownloading(false);
+    }
+  };
   const handleLike = async () => {
     if (!user) return;
     try {
@@ -179,9 +245,17 @@ const VideoInfo = ({ video }: any) => {
             variant="ghost"
             size="sm"
             className="bg-gray-100 rounded-full"
+            onClick={handleDownload}
+            disabled={
+              isDownloading ||
+              Boolean(
+                downloadUsage && downloadUsage.used >= downloadUsage.limit
+                  && downloadUsage.limit !== null
+              )
+            }
           >
             <Download className="w-5 h-5 mr-2" />
-            Download
+            {isDownloading ? "Downloading" : "Download"}
           </Button>
           <Button
             variant="ghost"
@@ -192,6 +266,16 @@ const VideoInfo = ({ video }: any) => {
           </Button>
         </div>
       </div>
+      {downloadMessage && (
+        <p className="text-sm text-gray-600" role="status">
+          {downloadMessage}
+        </p>
+      )}
+      {downloadUsage && downloadUsage.limit !== null && downloadUsage.used >= downloadUsage.limit && (
+        <p className="text-sm text-amber-700" role="status">
+          You have reached your daily download limit. Upgrade your plan for more downloads.
+        </p>
+      )}
       <div className="bg-gray-100 rounded-lg p-4">
         <div className="flex gap-4 text-sm font-medium mb-2">
           <span>{video.views.toLocaleString()} views</span>
